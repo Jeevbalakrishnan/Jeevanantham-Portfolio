@@ -7,6 +7,7 @@ interface HeroSectionProps {
   brand: BrandContent;
   socialLinks: SocialLink[];
   quickStats: StatItem[];
+  profileImage: string;
   onDownloadResume: () => void;
 }
 
@@ -14,6 +15,7 @@ export function HeroSection({
   brand,
   socialLinks,
   quickStats,
+  profileImage,
   onDownloadResume,
 }: HeroSectionProps) {
   return (
@@ -119,7 +121,7 @@ export function HeroSection({
                   <div className="absolute inset-3 rounded-full border border-blue-400/20 bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm" />
                   <div className="relative z-10 overflow-hidden rounded-full border border-white/12 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.14),transparent_38%)] shadow-[0_24px_60px_rgba(2,6,23,0.45)]">
                     <img
-                      src="/images/jeevanantham-profile.png"
+                      src={profileImage || "/images/jeevanantham-profile.png"}
                       alt={brand.fullName}
                       className="aspect-square w-full object-cover"
                     />

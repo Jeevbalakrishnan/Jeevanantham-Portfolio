@@ -57,10 +57,47 @@ export interface SocialLink {
   platform?: SocialPlatform;
 }
 
+export type SkillIconKey =
+  | "python"
+  | "javascript"
+  | "typescript"
+  | "react"
+  | "tailwind"
+  | "sql"
+  | "html"
+  | "css"
+  | "git"
+  | "pandas"
+  | "numpy"
+  | "scikit"
+  | "java"
+  | "node"
+  | "ml"
+  | "code";
+
+export interface SkillRecord {
+  id: string;
+  name: string;
+  iconKey: SkillIconKey;
+  accentClass: string;
+}
+
 export interface SkillItem {
   name: string;
   icon: IconType;
   accentClass: string;
+  id?: string;
+  iconKey?: SkillIconKey;
+}
+
+export interface CertificationRecord {
+  id: string;
+  title: string;
+  issuer: string;
+  date: string;
+  credentialUrl: string;
+  description: string;
+  image: string;
 }
 
 export interface ProjectRecord {
@@ -124,6 +161,9 @@ export interface PortfolioContent {
   socialLinks: SocialLinkRecord[];
   projects: ProjectRecord[];
   stats: StatRecord[];
+  skills: SkillRecord[];
+  certifications: CertificationRecord[];
+  profileImage: string;
 }
 
 export interface ContactSubmission {

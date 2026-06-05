@@ -3,8 +3,10 @@ import {
   FiClock,
   FiCode,
   FiCpu,
+  FiDatabase,
   FiFilm,
   FiFolder,
+  FiGitBranch,
   FiGithub,
   FiGlobe,
   FiInstagram,
@@ -13,12 +15,30 @@ import {
   FiMail,
   FiPhone,
   FiShield,
+  FiZap,
 } from "react-icons/fi";
+import {
+  SiCss,
+  SiHtml5,
+  SiJavascript,
+  SiNodedotjs,
+  SiNumpy,
+  SiPandas,
+  SiPython,
+  SiReact,
+  SiScikitlearn,
+  SiTailwindcss,
+  SiTypescript,
+} from "react-icons/si";
+import type { IconType } from "react-icons";
 import type {
   PortfolioContent,
   ProjectIconKey,
   ProjectItem,
   ProjectRecord,
+  SkillIconKey,
+  SkillItem,
+  SkillRecord,
   SocialLink,
   SocialLinkRecord,
   SocialPlatform,
@@ -52,6 +72,7 @@ export const defaultPortfolioContent: PortfolioContent = {
       "For internship opportunities, collaborations, or project discussions, email is the fastest way to reach me. You can also leave a direct message through the contact form below.",
     heroStatus: "Building with focus",
   },
+  profileImage: "/images/jeevanantham-profile.png",
   socialLinks: [
     {
       id: "github",
@@ -162,6 +183,112 @@ export const defaultPortfolioContent: PortfolioContent = {
       iconKey: "clock",
     },
   ],
+  skills: [
+    {
+      id: "python",
+      name: "Python",
+      iconKey: "python",
+      accentClass: "from-yellow-400/20 via-blue-500/15 to-transparent text-yellow-300",
+    },
+    {
+      id: "javascript",
+      name: "JavaScript",
+      iconKey: "javascript",
+      accentClass: "from-yellow-300/20 via-amber-400/10 to-transparent text-yellow-200",
+    },
+    {
+      id: "typescript",
+      name: "TypeScript",
+      iconKey: "typescript",
+      accentClass: "from-blue-400/20 via-sky-500/10 to-transparent text-sky-200",
+    },
+    {
+      id: "react",
+      name: "React",
+      iconKey: "react",
+      accentClass: "from-cyan-400/20 via-blue-500/10 to-transparent text-cyan-200",
+    },
+    {
+      id: "tailwind",
+      name: "Tailwind",
+      iconKey: "tailwind",
+      accentClass: "from-cyan-300/20 via-sky-400/10 to-transparent text-cyan-200",
+    },
+    {
+      id: "sql",
+      name: "SQL",
+      iconKey: "sql",
+      accentClass: "from-orange-300/20 via-amber-500/10 to-transparent text-orange-200",
+    },
+    {
+      id: "html",
+      name: "HTML5",
+      iconKey: "html",
+      accentClass: "from-orange-400/20 via-rose-500/10 to-transparent text-orange-200",
+    },
+    {
+      id: "css",
+      name: "CSS3",
+      iconKey: "css",
+      accentClass: "from-blue-400/20 via-indigo-500/10 to-transparent text-blue-200",
+    },
+    {
+      id: "git",
+      name: "Git",
+      iconKey: "git",
+      accentClass: "from-orange-400/20 via-red-500/10 to-transparent text-orange-200",
+    },
+    {
+      id: "pandas",
+      name: "Pandas",
+      iconKey: "pandas",
+      accentClass: "from-fuchsia-400/20 via-purple-500/10 to-transparent text-fuchsia-200",
+    },
+    {
+      id: "numpy",
+      name: "NumPy",
+      iconKey: "numpy",
+      accentClass: "from-cyan-400/20 via-blue-500/10 to-transparent text-cyan-200",
+    },
+    {
+      id: "scikit",
+      name: "Scikit-learn",
+      iconKey: "scikit",
+      accentClass: "from-orange-400/20 via-yellow-500/10 to-transparent text-amber-200",
+    },
+  ],
+  certifications: [
+    {
+      id: "cert-python",
+      title: "Python for Data Science",
+      issuer: "Coursera",
+      date: "2024",
+      credentialUrl: "https://coursera.org/",
+      description:
+        "Foundational certification covering Python programming applied to data analysis, visualization, and ML workflows.",
+      image: "",
+    },
+    {
+      id: "cert-ml",
+      title: "Machine Learning Fundamentals",
+      issuer: "Google Skillshop",
+      date: "2024",
+      credentialUrl: "https://skillshop.withgoogle.com/",
+      description:
+        "Hands-on certification covering supervised, unsupervised learning, model evaluation, and applied ML techniques.",
+      image: "",
+    },
+    {
+      id: "cert-web",
+      title: "Modern Web Development",
+      issuer: "freeCodeCamp",
+      date: "2023",
+      credentialUrl: "https://freecodecamp.org/",
+      description:
+        "Comprehensive certification covering React, JavaScript, responsive design, and modern frontend tooling.",
+      image: "",
+    },
+  ],
 };
 
 const socialIconMap: Record<SocialPlatform, SocialLink["icon"]> = {
@@ -187,6 +314,55 @@ const statIconMap: Record<StatIconKey, StatItem["icon"]> = {
   clock: FiClock,
 };
 
+const skillIconMap: Record<SkillIconKey, IconType> = {
+  python: SiPython,
+  javascript: SiJavascript,
+  typescript: SiTypescript,
+  react: SiReact,
+  tailwind: SiTailwindcss,
+  sql: FiDatabase,
+  html: SiHtml5,
+  css: SiCss,
+  git: FiGitBranch,
+  pandas: SiPandas,
+  numpy: SiNumpy,
+  scikit: SiScikitlearn,
+  java: FiCode,
+  node: SiNodedotjs,
+  ml: FiZap,
+  code: FiCode,
+};
+
+export const skillIconOptions: { key: SkillIconKey; label: string }[] = [
+  { key: "python", label: "Python" },
+  { key: "javascript", label: "JavaScript" },
+  { key: "typescript", label: "TypeScript" },
+  { key: "react", label: "React" },
+  { key: "tailwind", label: "Tailwind" },
+  { key: "sql", label: "SQL" },
+  { key: "html", label: "HTML" },
+  { key: "css", label: "CSS" },
+  { key: "git", label: "Git" },
+  { key: "pandas", label: "Pandas" },
+  { key: "numpy", label: "NumPy" },
+  { key: "scikit", label: "Scikit-learn" },
+  { key: "java", label: "Java" },
+  { key: "node", label: "Node.js" },
+  { key: "ml", label: "Machine Learning" },
+  { key: "code", label: "Generic Code" },
+];
+
+export const skillAccentPresets = [
+  "from-blue-400/20 via-sky-500/10 to-transparent text-sky-200",
+  "from-cyan-400/20 via-blue-500/10 to-transparent text-cyan-200",
+  "from-yellow-400/20 via-amber-500/10 to-transparent text-yellow-200",
+  "from-fuchsia-400/20 via-purple-500/10 to-transparent text-fuchsia-200",
+  "from-orange-400/20 via-red-500/10 to-transparent text-orange-200",
+  "from-emerald-400/20 via-green-500/10 to-transparent text-emerald-200",
+  "from-rose-400/20 via-pink-500/10 to-transparent text-rose-200",
+  "from-indigo-400/20 via-blue-500/10 to-transparent text-indigo-200",
+];
+
 export function resolveSocialLinks(links: SocialLinkRecord[]): SocialLink[] {
   return links.map((link) => ({
     ...link,
@@ -208,6 +384,13 @@ export function resolveStats(stats: StatRecord[]): StatItem[] {
   }));
 }
 
+export function resolveSkills(skills: SkillRecord[]): SkillItem[] {
+  return skills.map((skill) => ({
+    ...skill,
+    icon: skillIconMap[skill.iconKey] ?? FiCode,
+  }));
+}
+
 export function getHeroQuickStats(stats: StatRecord[]) {
   return resolveStats(stats).slice(0, 3);
 }
@@ -220,6 +403,7 @@ export function createNormalizedContent(
       ...defaultPortfolioContent.brand,
       ...(input?.brand ?? {}),
     },
+    profileImage: input?.profileImage || defaultPortfolioContent.profileImage,
     socialLinks:
       input?.socialLinks?.length
         ? input.socialLinks.map((link, index) => ({
@@ -247,5 +431,30 @@ export function createNormalizedContent(
             value: Number.isFinite(stat.value) ? stat.value : 0,
           }))
         : defaultPortfolioContent.stats,
+    skills:
+      input?.skills?.length
+        ? input.skills.map((skill, index) => ({
+            id: skill.id || `skill-${index + 1}`,
+            name: skill.name || `Skill ${index + 1}`,
+            iconKey: skill.iconKey || "code",
+            accentClass: skill.accentClass || skillAccentPresets[index % skillAccentPresets.length],
+          }))
+        : defaultPortfolioContent.skills,
+    certifications:
+      input?.certifications?.length
+        ? input.certifications.map((cert, index) => ({
+            id: cert.id || `cert-${index + 1}`,
+            title: cert.title || `Certification ${index + 1}`,
+            issuer: cert.issuer || "Issuer",
+            date: cert.date || "",
+            credentialUrl: cert.credentialUrl || "",
+            description: cert.description || "",
+            image: cert.image || "",
+          }))
+        : defaultPortfolioContent.certifications,
   };
+}
+
+export function createId(prefix: string) {
+  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
 }

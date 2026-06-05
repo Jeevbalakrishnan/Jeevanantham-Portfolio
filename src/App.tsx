@@ -7,12 +7,14 @@ import { Navbar } from "@/components/layout/Navbar";
 import {
   getHeroQuickStats,
   resolveProjects,
+  resolveSkills,
   resolveSocialLinks,
   resolveStats,
 } from "@/data/portfolioContent";
 import { usePortfolioContent } from "@/hooks/usePortfolioContent";
 import { useTheme } from "@/hooks/useTheme";
 import { AboutSection } from "@/sections/AboutSection";
+import { CertificationsSection } from "@/sections/CertificationsSection";
 import { ContactSection } from "@/sections/ContactSection";
 import { EducationSection } from "@/sections/EducationSection";
 import { HeroSection } from "@/sections/HeroSection";
@@ -21,7 +23,7 @@ import { SkillsSection } from "@/sections/SkillsSection";
 import { StatsSection } from "@/sections/StatsSection";
 import { downloadResume } from "@/utils/downloadResume";
 
-const observedSections = ["home", "about", "skills", "projects", "education", "contact"];
+const observedSections = ["home", "about", "skills", "projects", "certifications", "education", "contact"];
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
@@ -42,6 +44,7 @@ export default function App() {
   const socialLinks = useMemo(() => resolveSocialLinks(content.socialLinks), [content.socialLinks]);
   const projects = useMemo(() => resolveProjects(content.projects), [content.projects]);
   const stats = useMemo(() => resolveStats(content.stats), [content.stats]);
+  const skills = useMemo(() => resolveSkills(content.skills), [content.skills]);
   const heroQuickStats = useMemo(() => getHeroQuickStats(content.stats), [content.stats]);
 
   useEffect(() => {
@@ -94,6 +97,7 @@ export default function App() {
           brand={content.brand}
           socialLinks={socialLinks}
           quickStats={heroQuickStats}
+          profileImage={content.profileImage}
           onDownloadResume={downloadResume}
         />
 
@@ -107,7 +111,7 @@ export default function App() {
         >
           <div className="mx-auto grid max-w-[1340px] gap-6 xl:grid-cols-12">
             <div className="xl:col-span-5">
-              <SkillsSection />
+              <SkillsSection skills={skills} />
             </div>
             <div className="xl:col-span-7">
               <ProjectsSection projects={projects} />
@@ -117,6 +121,7 @@ export default function App() {
 
         <StatsSection stats={stats} />
         <AboutSection brand={content.brand} />
+        <CertificationsSection certifications={content.certifications} />
         <EducationSection />
         <ContactSection
           brand={content.brand}

@@ -1,9 +1,13 @@
 import { motion } from "framer-motion";
 import { FiLayers } from "react-icons/fi";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { skills } from "@/data/portfolio";
+import type { SkillItem } from "@/types/portfolio";
 
-export function SkillsSection() {
+interface SkillsSectionProps {
+  skills: SkillItem[];
+}
+
+export function SkillsSection({ skills }: SkillsSectionProps) {
   return (
     <section id="skills" className="scroll-mt-28" aria-label="Skills section">
       <GlassCard strong className="h-full px-5 py-5 sm:px-6 sm:py-6">
@@ -33,7 +37,7 @@ export function SkillsSection() {
 
             return (
               <motion.div
-                key={skill.name}
+                key={skill.id ?? skill.name}
                 initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.25 }}

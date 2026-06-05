@@ -1,24 +1,35 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  FiAward,
   FiDatabase,
   FiDownload,
   FiEdit3,
   FiExternalLink,
   FiEye,
+  FiImage,
   FiInbox,
   FiKey,
+  FiLayers,
   FiLock,
   FiMail,
+  FiPlus,
   FiRefreshCw,
   FiSave,
   FiServer,
   FiSettings,
   FiShield,
+  FiTrash2,
   FiX,
 } from "react-icons/fi";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { cn } from "@/utils/cn";
+import {
+  createId,
+  skillAccentPresets,
+  skillIconOptions,
+} from "@/data/portfolioContent";
 import {
   getAdminPasscode,
   hasSupabaseConfig,
@@ -28,12 +39,13 @@ import type {
   ContactSubmission,
   DataSource,
   PortfolioContent,
+  SkillIconKey,
   SocialPlatform,
 } from "@/types/portfolio";
 
 const SESSION_KEY = "jeevanantham-admin-session";
 
-type AdminTab = "profile" | "projects" | "inbox";
+type AdminTab = "profile" | "skills" | "projects" | "certifications" | "inbox";
 
 interface AdminPanelProps {
   content: PortfolioContent;
@@ -129,6 +141,9 @@ export function AdminPanel({
   };
 
   const handleReset = async () => {
+    if (!window.confirm("Reset all portfolio content to defaults? This cannot be undone.")) {
+      return;
+    }
     await onReset();
     setSaveMessage("Content reset to defaults.");
     window.setTimeout(() => setSaveMessage(""), 2200);
@@ -156,6 +171,10 @@ export function AdminPanel({
         [field]: value,
       },
     }));
+  };
+
+  const updateProfileImage = (image: string) => {
+    setDraft((current) => ({ ...current, profileImage: image || "/images/jeevanantham-profile.png" }));
   };
 
   const updateSocial = (
@@ -220,6 +239,84 @@ export function AdminPanel({
     }));
   };
 
+  const updateSkill = (
+    index: number,
+    field: "name" | "iconKey",
+    value: string,
+  ) => {
+    setDraft((current) => ({
+      ...current,
+      skills: current.skills.map((item, itemIndex) =>
+        itemIndex === index
+          ? {
+              ...item,
+              [field]: field === "iconKey" ? (value as SkillIconKey) : value,
+            }
+          : item,
+      ),
+    }));
+  };
+
+  const addSkill = () => {
+    setDraft((current) => ({
+      ...current,
+      skills: [
+        ...current.skills,
+        {
+          id: createId("skill"),
+          name: "New Skill",
+          iconKey: "code",
+          accentClass: skillAccentPresets[current.skills.length % skillAccentPresets.length],
+        },
+      ],
+    }));
+  };
+
+  const removeSkill = (index: number) => {
+    setDraft((current) => ({
+      ...current,
+      skills: current.skills.filter((_, itemIndex) => itemIndex !== index),
+    }));
+  };
+
+  const updateCertification = (
+    index: number,
+    field: keyof PortfolioContent["certifications"][number],
+    value: string,
+  ) => {
+    setDraft((current) => ({
+      ...current,
+      certifications: current.certifications.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, [field]: value } : item,
+      ),
+    }));
+  };
+
+  const addCertification = () => {
+    setDraft((current) => ({
+      ...current,
+      certifications: [
+        ...current.certifications,
+        {
+          id: createId("cert"),
+          title: "New Certification",
+          issuer: "Issuer Name",
+          date: new Date().getFullYear().toString(),
+          credentialUrl: "",
+          description: "",
+          image: "",
+        },
+      ],
+    }));
+  };
+
+  const removeCertification = (index: number) => {
+    setDraft((current) => ({
+      ...current,
+      certifications: current.certifications.filter((_, itemIndex) => itemIndex !== index),
+    }));
+  };
+
   return (
     <>
       <button
@@ -247,7 +344,7 @@ export function AdminPanel({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 24 }}
               transition={{ duration: 0.24, ease: "easeOut" }}
-              className="fixed right-0 top-0 z-[80] h-screen w-full max-w-[720px] p-3 sm:p-4"
+              className="fixed right-0 top-0 z-[80] h-screen w-full max-w-[760px] p-3 sm:p-4"
             >
               <GlassCard strong className="flex h-full flex-col overflow-hidden rounded-[28px]">
                 <div className="flex items-start justify-between gap-4 border-b border-white/10 px-5 py-5 sm:px-6">
@@ -261,7 +358,7 @@ export function AdminPanel({
                           Portfolio Admin
                         </p>
                         <p className="text-sm text-[var(--text-secondary)]">
-                          Edit live content, database sync, and contact inbox.
+                          Edit live content, manage skills, certifications, and inbox.
                         </p>
                       </div>
                     </div>
@@ -310,6 +407,7 @@ export function AdminPanel({
                             type="password"
                             value={passcode}
                             onChange={(event) => setPasscode(event.target.value)}
+                            onKeyDown={(event) => event.key === "Enter" && handleUnlock()}
                             className="h-12 w-full rounded-2xl border border-white/10 bg-white/5 pl-11 pr-4 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-blue-400/30 focus:bg-blue-500/[0.08]"
                             placeholder="Enter passcode"
                           />
@@ -342,7 +440,9 @@ export function AdminPanel({
                       <div className="flex flex-wrap gap-2">
                         {[
                           { id: "profile", label: "Profile", icon: FiEdit3 },
+                          { id: "skills", label: "Skills", icon: FiLayers },
                           { id: "projects", label: "Projects", icon: FiDatabase },
+                          { id: "certifications", label: "Certs", icon: FiAward },
                           { id: "inbox", label: "Inbox", icon: FiInbox },
                         ].map((item) => {
                           const Icon = item.icon;
@@ -374,7 +474,7 @@ export function AdminPanel({
                           className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-[var(--text-secondary)] transition hover:text-white"
                         >
                           <FiDownload />
-                          Export JSON
+                          Export
                         </button>
                         <button
                           type="button"
@@ -390,6 +490,21 @@ export function AdminPanel({
                     <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6 sm:py-6">
                       {tab === "profile" && (
                         <div className="space-y-6">
+                          <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
+                            <div className="mb-4 flex items-center gap-3">
+                              <FiImage className="text-blue-200" />
+                              <p className="text-base font-semibold text-[var(--text-primary)]">
+                                Profile Picture
+                              </p>
+                            </div>
+                            <ImageUpload
+                              label="Hero profile image"
+                              value={draft.profileImage}
+                              onChange={updateProfileImage}
+                              height="h-64"
+                            />
+                          </div>
+
                           <div className="grid gap-4 sm:grid-cols-2">
                             <Field label="Full Name" value={draft.brand.fullName} onChange={(value) => updateBrand("fullName", value)} />
                             <Field label="Hero Name" value={draft.brand.heroName} onChange={(value) => updateBrand("heroName", value)} />
@@ -459,6 +574,65 @@ export function AdminPanel({
                         </div>
                       )}
 
+                      {tab === "skills" && (
+                        <div className="space-y-5">
+                          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[24px] border border-white/10 bg-white/5 p-5">
+                            <div>
+                              <p className="text-base font-semibold text-[var(--text-primary)]">Skills Editor</p>
+                              <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                                Add, edit, or remove skills shown on the portfolio.
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={addSkill}
+                              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(59,130,246,0.28)]"
+                            >
+                              <FiPlus />
+                              Add Skill
+                            </button>
+                          </div>
+
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            {draft.skills.map((skill, index) => (
+                              <div key={skill.id} className="rounded-[22px] border border-white/10 bg-white/5 p-4">
+                                <div className="space-y-3">
+                                  <Field label="Skill Name" value={skill.name} onChange={(value) => updateSkill(index, "name", value)} />
+                                  <div className="grid gap-2 text-sm font-medium text-[var(--text-secondary)]">
+                                    Icon
+                                    <select
+                                      value={skill.iconKey}
+                                      onChange={(event) => updateSkill(index, "iconKey", event.target.value)}
+                                      className="h-11 rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-[var(--text-primary)] outline-none"
+                                    >
+                                      {skillIconOptions.map((option) => (
+                                        <option key={option.key} value={option.key} className="bg-slate-900">
+                                          {option.label}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeSkill(index)}
+                                    className="inline-flex items-center gap-2 rounded-full border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-200 transition hover:bg-red-500/15"
+                                  >
+                                    <FiTrash2 />
+                                    Remove
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {!draft.skills.length && (
+                            <div className="rounded-[24px] border border-dashed border-white/10 bg-white/5 p-6 text-center text-sm text-[var(--text-secondary)]">
+                              No skills yet. Click <strong>Add Skill</strong> to create one.
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                       {tab === "projects" && (
                         <div className="space-y-6">
                           <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
@@ -509,6 +683,65 @@ export function AdminPanel({
                               ))}
                             </div>
                           </div>
+                        </div>
+                      )}
+
+                      {tab === "certifications" && (
+                        <div className="space-y-5">
+                          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[24px] border border-white/10 bg-white/5 p-5">
+                            <div>
+                              <p className="text-base font-semibold text-[var(--text-primary)]">Certifications</p>
+                              <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                                Add or edit certifications displayed in the portfolio.
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={addCertification}
+                              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(59,130,246,0.28)]"
+                            >
+                              <FiPlus />
+                              Add Certification
+                            </button>
+                          </div>
+
+                          <div className="space-y-5">
+                            {draft.certifications.map((cert, index) => (
+                              <div key={cert.id} className="space-y-4 rounded-[24px] border border-white/10 bg-white/5 p-5">
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                  <Field label="Title" value={cert.title} onChange={(value) => updateCertification(index, "title", value)} />
+                                  <Field label="Issuer" value={cert.issuer} onChange={(value) => updateCertification(index, "issuer", value)} />
+                                  <Field label="Date / Year" value={cert.date} onChange={(value) => updateCertification(index, "date", value)} />
+                                  <Field label="Credential URL" value={cert.credentialUrl} onChange={(value) => updateCertification(index, "credentialUrl", value)} />
+                                </div>
+                                <AreaField
+                                  label="Description"
+                                  rows={3}
+                                  value={cert.description}
+                                  onChange={(value) => updateCertification(index, "description", value)}
+                                />
+                                <ImageUpload
+                                  label="Certificate Image (optional)"
+                                  value={cert.image}
+                                  onChange={(value) => updateCertification(index, "image", value)}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => removeCertification(index)}
+                                  className="inline-flex items-center gap-2 rounded-full border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-200 transition hover:bg-red-500/15"
+                                >
+                                  <FiTrash2 />
+                                  Remove Certification
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+
+                          {!draft.certifications.length && (
+                            <div className="rounded-[24px] border border-dashed border-white/10 bg-white/5 p-6 text-center text-sm text-[var(--text-secondary)]">
+                              No certifications yet. Click <strong>Add Certification</strong> to create one.
+                            </div>
+                          )}
                         </div>
                       )}
 
@@ -600,7 +833,8 @@ export function AdminPanel({
                         <button
                           type="button"
                           onClick={() => void handleSave()}
-                          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(59,130,246,0.28)]"
+                          disabled={saving}
+                          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(59,130,246,0.28)] disabled:opacity-60"
                         >
                           <FiSave />
                           {saving ? "Saving..." : "Save Changes"}
